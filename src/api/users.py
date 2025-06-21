@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, Request
 from src.schemas import User
 from src.services.auth import get_current_user
 from src.services.users import UserService
@@ -12,7 +12,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 @router.get("/me", response_model=User, description="No more than 10 requests per minute")
 @limiter.limit("10/minute")
-async def me(user: User = Depends(get_current_user)):
+async def me(request: Request, user: User = Depends(get_current_user)):
     return user
 
 @router.patch("/avatar", response_model=User)
